@@ -26,7 +26,7 @@ class PortariaPanelProvider extends PanelProvider
         return $panel
             ->id('portaria')
             ->path('portaria')
-            ->brandName('SAFE-senai - Portaria')
+            ->brandName('SAFE - Portaria')
             ->colors([
                 'primary' => '#E30613',
             ])

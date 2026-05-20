@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Portal SAFE-senai - Controle de Acesso Inteligente</title>
     <link rel="icon" href="/favicon.ico" sizes="any">
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --senai-red: #E30613;
@@ -304,7 +304,6 @@
             <!-- Admin Card -->
             <div class="panel-card">
                 <div>
-                    <div class="panel-icon">⚙️</div>
                     <h3 class="panel-title">Administração</h3>
                     <p class="panel-desc">Gerencia turmas, disciplinas, matrículas e associações de professores. Prepara o terreno da operação escolar de forma centralizada.</p>
                 </div>
@@ -314,7 +313,6 @@
             <!-- AQV Card -->
             <div class="panel-card">
                 <div>
-                    <div class="panel-icon">🛡️</div>
                     <h3 class="panel-title">Coordenação (AQV)</h3>
                     <p class="panel-desc">Cria liberações antecipadas ou entradas tardias, monitora a saída de alunos em tempo real e analisa relatórios de segurança.</p>
                 </div>
@@ -324,7 +322,6 @@
             <!-- Professor Card -->
             <div class="panel-card">
                 <div>
-                    <div class="panel-icon">👨‍🏫</div>
                     <h3 class="panel-title">Professor em Sala</h3>
                     <p class="panel-desc">Valida e assina a liberação dos alunos em sala de aula. Confirma presença ou justifica a falta do aluno com um único clique.</p>
                 </div>
@@ -334,7 +331,6 @@
             <!-- Portaria Card -->
             <div class="panel-card">
                 <div>
-                    <div class="panel-icon">🚪</div>
                     <h3 class="panel-title">Portaria Escolar</h3>
                     <p class="panel-desc">Valida e registra a saída ou entrada física dos alunos no portão escolar de forma digital, ágil e altamente segura.</p>
                 </div>

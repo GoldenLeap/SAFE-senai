@@ -26,7 +26,7 @@ class ProfessorPanelProvider extends PanelProvider
         return $panel
             ->id('professor')
             ->path('professor')
-            ->brandName('SAFE-senai - Professor')
+            ->brandName('SAFE - Professor')
             ->colors([
                 'primary' => '#E30613',
             ])

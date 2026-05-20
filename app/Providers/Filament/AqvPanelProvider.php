@@ -26,7 +26,7 @@ class AqvPanelProvider extends PanelProvider
         return $panel
             ->id('aqv')
             ->path('aqv')
-            ->brandName('SAFE-senai - AQV')
+            ->brandName('SAFE - AQV')
             ->colors([
                 'primary' => '#E30613',
             ])

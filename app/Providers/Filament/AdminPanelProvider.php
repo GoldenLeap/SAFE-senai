@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('SAFE-senai')
+            ->brandName('SAFE')
             ->colors([
                 'primary' => '#E30613',
             ])

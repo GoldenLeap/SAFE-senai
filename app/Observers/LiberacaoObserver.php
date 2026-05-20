@@ -2,19 +2,37 @@
 
 namespace App\Observers;
 
+use App\Mail\TesteMail;
 use App\Models\Liberacao;
 use App\Models\LiberacaoHistorico;
 use App\Models\User;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class LiberacaoObserver
 {
+    /**
+     * Envia uma notificação por e-mail.
+     */
+    private function enviarEmail(string $destinatario, string $assunto, string $corpo): void
+    {
+        try {
+            Mail::send([], [], function ($message) use ($destinatario, $assunto, $corpo) {
+                $message->to($destinatario)
+                        ->subject($assunto)
+                        ->html($corpo);
+            });
+        } catch (\Exception $e) {
+            logger()->error("Falha ao enviar e-mail para {$destinatario}: " . $e->getMessage());
+        }
+    }
+
     /**
      * Handle the Liberacao "created" event.
      */
     public function created(Liberacao $liberacao): void
     {
-        // 1. Criar registro de auditoria
+        // Criar registro de auditoria
         LiberacaoHistorico::create([
             'liberacao_id' => $liberacao->id,
             'user_id' => auth()->id() ?? $liberacao->aqv_id,
@@ -30,24 +48,38 @@ class LiberacaoObserver
         $disciplinaNome = $liberacao->escalaProfessor?->turmaDisciplina?->disciplina?->nome ?? 'Disciplina';
         $horario = substr($liberacao->horario_previsto, 0, 5);
 
-        // 2. Notificar o Professor da escala letiva
+        // Notificar o Professor da escala letiva
         $professor = $liberacao->escalaProfessor?->professor;
         if ($professor) {
+            $titulo = 'Nova Liberação de Aluno';
+            $corpo = "O aluno <strong>{$alunoNome}</strong> ({$turmaNome}) tem uma liberação cadastrada para as <strong>{$horario}</strong> na aula de {$disciplinaNome}.";
+
             Notification::make()
-                ->title('Nova Liberação de Aluno 🛡️')
-                ->body("O aluno <strong>{$alunoNome}</strong> ({$turmaNome}) tem uma liberação cadastrada para as <strong>{$horario}</strong> na aula de {$disciplinaNome}.")
+                ->title($titulo)
+                ->body($corpo)
                 ->info()
                 ->toDatabase($professor);
+
+            if (!empty($professor->email)) {
+                $this->enviarEmail($professor->email, $titulo, $corpo);
+            }
         }
 
-        // 3. Notificar todos da Portaria
+        // Notificar todos da Portaria
         $portariaStaff = User::where('cargo', 'portaria')->get();
         foreach ($portariaStaff as $guard) {
+            $titulo = 'Novo Aluno Aguardando no Portão';
+            $corpo = "O aluno <strong>{$alunoNome}</strong> ({$turmaNome}) está autorizado a sair/entrar às <strong>{$horario}</strong>.";
+
             Notification::make()
-                ->title('Novo Aluno Aguardando no Portão 🚪')
-                ->body("O aluno <strong>{$alunoNome}</strong> ({$turmaNome}) está autorizado a sair/entrar às <strong>{$horario}</strong>.")
+                ->title($titulo)
+                ->body($corpo)
                 ->warning()
                 ->sendToDatabase($guard);
+
+            if (!empty($guard->email)) {
+                $this->enviarEmail($guard->email, $titulo, $corpo);
+            }
         }
     }
 
@@ -62,7 +94,7 @@ class LiberacaoObserver
         $professor = $liberacao->escalaProfessor?->professor;
         $horarioAtual = now()->format('H:i');
 
-        // 1. Verificar se houve liberação física na Portaria
+        // Verificar se houve liberação física na Portaria
         if ($liberacao->wasChanged('status_portaria') && $liberacao->status_portaria === 'liberado') {
             LiberacaoHistorico::create([
                 'liberacao_id' => $liberacao->id,
@@ -73,25 +105,39 @@ class LiberacaoObserver
 
             // Notificar o Professor
             if ($professor) {
+                $titulo = 'Aluno Liberado no Portão';
+                $corpo = "O aluno <strong>{$alunoNome}</strong> foi liberado e saiu/entrou na portaria às <strong>{$horarioAtual}</strong>.";
+
                 Notification::make()
-                    ->title('Aluno Liberado no Portão ✅')
-                    ->body("O aluno <strong>{$alunoNome}</strong> foi liberado e saiu/entrou na portaria às <strong>{$horarioAtual}</strong>.")
+                    ->title($titulo)
+                    ->body($corpo)
                     ->success()
                     ->sendToDatabase($professor);
+
+                if (!empty($professor->email)) {
+                    $this->enviarEmail($professor->email, $titulo, $corpo);
+                }
             }
 
             // Notificar toda a Coordenação (AQV)
             $aqvStaff = User::where('cargo', 'aqv')->get();
             foreach ($aqvStaff as $coord) {
+                $titulo = 'Saída Concluída na Portaria';
+                $corpo = "O aluno <strong>{$alunoNome}</strong> foi oficialmente liberado no portão às <strong>{$horarioAtual}</strong>.";
+
                 Notification::make()
-                    ->title('Saída Concluída na Portaria 🚪')
-                    ->body("O aluno <strong>{$alunoNome}</strong> foi oficialmente liberado no portão às <strong>{$horarioAtual}</strong>.")
+                    ->title($titulo)
+                    ->body($corpo)
                     ->success()
                     ->sendToDatabase($coord);
+
+                if (!empty($coord->email)) {
+                    $this->enviarEmail($coord->email, $titulo, $corpo);
+                }
             }
         }
 
-        // 2. Verificar se o Professor atualizou a Frequência/Chamada
+        // Verificar se o Professor atualizou a Frequência/Chamada
         if ($liberacao->wasChanged('frequencia_professor')) {
             $statusLabel = $liberacao->frequencia_professor === 'falta' ? 'Falta' : 'Presença Justificada';
             $acao = $liberacao->frequencia_professor === 'falta' ? 'falta_aplicada' : 'presenca_justificada';
@@ -109,11 +155,18 @@ class LiberacaoObserver
             // Notificar toda a Coordenação (AQV)
             $aqvStaff = User::where('cargo', 'aqv')->get();
             foreach ($aqvStaff as $coord) {
+                $titulo = "Chamada Atualizada: {$statusLabel}";
+                $corpo = "O professor <strong>{$professor?->nome}</strong> marcou <strong>{$statusLabel}</strong> para o aluno <strong>{$alunoNome}</strong>.";
+
                 Notification::make()
-                    ->title("Chamada Atualizada: {$statusLabel} 📝")
-                    ->body("O professor <strong>{$professor?->nome}</strong> marcou <strong>{$statusLabel}</strong> para o aluno <strong>{$alunoNome}</strong>.")
+                    ->title($titulo)
+                    ->body($corpo)
                     ->info()
                     ->sendToDatabase($coord);
+
+                if (!empty($coord->email)) {
+                    $this->enviarEmail($coord->email, $titulo, $corpo);
+                }
             }
         }
     }
