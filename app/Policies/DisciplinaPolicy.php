@@ -8,12 +8,9 @@ use Illuminate\Auth\Access\Response;
 
 class DisciplinaPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -21,7 +18,7 @@ class DisciplinaPolicy
      */
     public function view(User $user, Disciplina $disciplina): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -29,7 +26,7 @@ class DisciplinaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -37,7 +34,7 @@ class DisciplinaPolicy
      */
     public function update(User $user, Disciplina $disciplina): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -45,7 +42,7 @@ class DisciplinaPolicy
      */
     public function delete(User $user, Disciplina $disciplina): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -53,7 +50,7 @@ class DisciplinaPolicy
      */
     public function restore(User $user, Disciplina $disciplina): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -61,6 +58,6 @@ class DisciplinaPolicy
      */
     public function forceDelete(User $user, Disciplina $disciplina): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 }

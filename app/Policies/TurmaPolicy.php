@@ -8,12 +8,9 @@ use Illuminate\Auth\Access\Response;
 
 class TurmaPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -21,7 +18,7 @@ class TurmaPolicy
      */
     public function view(User $user, Turma $turma): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -29,7 +26,7 @@ class TurmaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -37,7 +34,7 @@ class TurmaPolicy
      */
     public function update(User $user, Turma $turma): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -45,7 +42,7 @@ class TurmaPolicy
      */
     public function delete(User $user, Turma $turma): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -53,7 +50,7 @@ class TurmaPolicy
      */
     public function restore(User $user, Turma $turma): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 
     /**
@@ -61,6 +58,6 @@ class TurmaPolicy
      */
     public function forceDelete(User $user, Turma $turma): bool
     {
-        return false;
+        return $user->cargo === 'admin';
     }
 }

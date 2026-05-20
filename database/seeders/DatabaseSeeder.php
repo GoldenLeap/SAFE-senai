@@ -42,13 +42,20 @@ class DatabaseSeeder extends Seeder
 
         // CRIAR OS USUÁRIOS FIXOS DO SISTEMA
 
+        // Admin Fixo
+        User::factory()->create([
+            'nome' => 'Admin do Sistema',
+            'email' => 'admin@escola.com',
+            'cargo' => 'admin',
+            'password' => bcrypt('senha123'),
+        ]);
 
         // AQV Fixo
         $aqv = User::factory()->create([
             'nome' => 'Ana Coordenação (AQV)',
             'email' => 'aqv@escola.com',
             'cargo' => 'aqv',
-            'senha' => bcrypt('senha123'),
+            'password' => bcrypt('senha123'),
         ]);
 
         // Professor Fixo
@@ -56,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'nome' => 'Professor Carlos',
             'email' => 'professor@escola.com',
             'cargo' => 'professor',
-            'senha' => bcrypt('senha123'),
+            'password' => bcrypt('senha123'),
         ]);
 
         // Porteiro Fixo
@@ -64,7 +71,7 @@ class DatabaseSeeder extends Seeder
             'nome' => 'Seu Jorge (Portaria)',
             'email' => 'portaria@escola.com',
             'cargo' => 'portaria',
-            'senha' => bcrypt('senha123'),
+            'password' => bcrypt('senha123'),
         ]);
 
         // Aluno Fixo (O João)
@@ -72,7 +79,7 @@ class DatabaseSeeder extends Seeder
             'nome' => 'João Aluno de Teste',
             'email' => 'aluno@escola.com',
             'cargo' => 'aluno',
-            'senha' => bcrypt('senha123'),
+            'password' => bcrypt('senha123'),
         ]);
 
         // MATRICULAR O JOÃO NA TURMA DO PROFESSOR CARLOS

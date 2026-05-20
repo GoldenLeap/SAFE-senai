@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Filament\Professor\Resources\Liberacaos;
+
+use App\Filament\Professor\Resources\Liberacaos\Pages\CreateLiberacao;
+use App\Filament\Professor\Resources\Liberacaos\Pages\EditLiberacao;
+use App\Filament\Professor\Resources\Liberacaos\Pages\ListLiberacaos;
+use App\Filament\Professor\Resources\Liberacaos\Schemas\LiberacaoForm;
+use App\Filament\Professor\Resources\Liberacaos\Tables\LiberacaosTable;
+use App\Models\Liberacao;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+use Illuminate\Database\Eloquent\Builder;
+
+class LiberacaoResource extends Resource
+{
+    protected static ?string $model = Liberacao::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    protected static ?string $modelLabel = 'Aluno Ausente';
+    protected static ?string $pluralModelLabel = 'Alunos Ausentes com Liberação';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('escalaProfessor', function (Builder $query) {
+            $query->where('professor_id', auth()->id());
+        });
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return LiberacaoForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return LiberacaosTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListLiberacaos::route('/'),
+        ];
+    }
+}
