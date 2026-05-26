@@ -58,7 +58,7 @@ class LiberacaoObserver
                 ->title($titulo)
                 ->body($corpo)
                 ->info()
-                ->toDatabase($professor);
+                ->sendToDatabase($professor);
 
             if (!empty($professor->email)) {
                 $this->enviarEmail($professor->email, $titulo, $corpo);

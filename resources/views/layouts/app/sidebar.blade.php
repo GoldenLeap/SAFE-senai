@@ -39,6 +39,8 @@
 
             <flux:spacer />
 
+            <flux:button variant="ghost" icon="bell" class="me-2" aria-label="{{ __('Notifications') }}" />
+
             <flux:dropdown position="top" align="end">
                 <flux:profile
                     :initials="auth()->user()->initials()"
